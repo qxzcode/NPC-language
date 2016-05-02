@@ -1,0 +1,14 @@
+a dangerous danger
+a happy happiness
+a sad sadness
+a angry anger
+n berry berries
+n tree trees
+n shrub shrubs
+n bush bushes
+n plant plants
+n person people
+v t eat eats eating ate eaten
+v t have has having had had
+v i walk walks walking walked walked
+v i run runs running ran run
