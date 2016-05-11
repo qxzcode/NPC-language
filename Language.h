@@ -21,6 +21,7 @@ struct noun {
 struct adj {
 	std::string adj, noun;
 	bool begVow;
+	operator bool() const {return !adj.empty();}
 };
 
 struct verb {
@@ -87,14 +88,6 @@ struct subjObj {
 	bool sing;
 	PERSON person;
 };
-
-
-/// HELPER FUNCTIONS ///
-
-static inline std::string capitalize(std::string str) {
-	str[0] = toupper(str[0]);
-	return str;
-}
 
 
 /// Language CLASS //
