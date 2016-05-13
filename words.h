@@ -57,4 +57,17 @@ namespace lang { namespace parse {
 	};
 	nounInst getNoun(std::string str);
 	
+	/// verb phrase parts
+	enum struct VPPart {
+		BEGIN, PERFAUX, TOBE, END
+	};
+	struct PerfAux {
+		bool present;
+		bool third;
+		operator bool() const;
+	};
+	
+	PerfAux getPerfAux(std::string str);
+	verb getPastPart(std::string str);
+	
 } }

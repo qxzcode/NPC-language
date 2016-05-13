@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]) {
 	
 	Language lang("/Users/quinn/Documents/C++/NPC language/NPC language/english.txt");
 	std::cout << "\n" <<
-		stringUtil::capitalize(lang.makeSentence(false,
+	stringUtil::capitalize(lang.makeSentence(false,
 						  pronoun{THIRD,true,NONE},
 						  {lang.verbs[0],PRESENT,SIMPLE,false,true},
 						  pronoun{THIRD,true,NONE}))
@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]) {
 	
 	parse::initWords(lang);
 	try {
-		parse::parseSentence("his few happy people berries");
+		parse::parseSentence("his few dangerous berry bushes have been eaten");
 	} catch (parse::GrammarException &ex) {
 		std::cerr << ex.what() << std::endl;
 	}

@@ -11,6 +11,8 @@
 #include <fstream>
 #include <sstream>
 
+const verb verb::TO_BE = {"be","is","being","was","been"};
+
 static bool isBegVow(std::string word) {
 	char l = word[0];
 	return l=='a' || l=='e' || l=='i' || l=='o' || l=='u';

@@ -16,6 +16,7 @@
 struct noun {
 	std::string sing, pl;
 	bool begVow;
+	operator bool() const {return !sing.empty();}
 };
 
 struct adj {
@@ -28,6 +29,9 @@ struct verb {
 	std::string base, thirdPers, ing, past, pastPart;
 	bool trans;
 	bool ppBegVow;
+	operator bool() const {return !base.empty();}
+	bool isToBe() const {return *this==TO_BE;}
+	static const verb TO_BE;
 };
 
 

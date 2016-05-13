@@ -44,6 +44,14 @@ namespace lang { namespace parse {
 		nounInst head = nounInst::NO_NOUN;
 	};
 	
+	struct VerbPhrase {
+		TENSE tense;
+		TENSE_FORM tenseForm = SIMPLE;
+		bool perfect = false;
+		bool active = true;
+		verb verb;
+	};
+	
 	void parseSentence(std::string sentence);
 	
 } }

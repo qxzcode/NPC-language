@@ -16,6 +16,9 @@ using namespace lang::parse;
 PossAdj::operator bool() const {
 	return person>=0;
 }
+PerfAux::operator bool() const {
+	return present || !third;
+}
 
 bool nounInst::operator==(const nounInst& rhs) const {
 	return (sing==rhs.sing) && (n.sing==rhs.n.sing);
@@ -34,6 +37,8 @@ std::map<std::string, PostDet> postDets;
 std::map<std::string, PossAdj> possAdjs;
 std::map<std::string, adj> adjs;
 std::map<std::string, nounInst> nouns;
+
+std::map<std::string, verb> pastParts;
 
 void parse::initWords(Language& lang) {
 	preDets["all"] = PreDet::ALL;
@@ -60,6 +65,9 @@ void parse::initWords(Language& lang) {
 		nouns[n.sing] = {n,true};
 		nouns[n.pl] = {n,false};
 	}
+	for (verb& v : lang.verbs) {
+		pastParts[v.pastPart] = v;
+	}
 }
 
 PreDet parse::getPreDet(std::string str) {
@@ -85,4 +93,15 @@ adj parse::getAdj(std::string str) {
 nounInst parse::getNoun(std::string str) {
 	auto it = nouns.find(str);
 	return it==nouns.end()? nounInst::NO_NOUN : it->second;
+}
+
+PerfAux parse::getPerfAux(std::string str) {
+	if (str=="had") return {false,false};
+	if (str=="have") return {true,false};
+	if (str=="has") return {true,true};
+	return {false,true};
+}
+verb parse::getPastPart(std::string str) {
+	auto it = pastParts.find(str);
+	return it==pastParts.end()? verb{""} : it->second;
 }
