@@ -15,7 +15,14 @@
 using namespace lang;
 using namespace lang::parse;
 
-void parse::parseSentence(std::string sentence) {
+std::string VerbPhrase::toString() const {
+	static const std::string tenseNames[] = {"past","present","future"};
+	static const std::string tfNames[] = {"simple","continuous","emphatic"};
+	if (!this->verb) return "[null VP]";
+	return "[to "+verb.base+": "+tfNames[tenseForm]+" "+tenseNames[tense]+(perfect?" perfect":"")+", "+(active?"active":"passive")+"]";
+}
+
+void parse::parseSentence(std::string sentence) {std::cout << getPastPart("eaten").pastPart << " " << (getPastPart("eaten")==verb::TO_BE) << "\n";
 	std::vector<std::string> words = stringUtil::split(sentence, ' ');
 	
 	struct tmp {
@@ -94,10 +101,79 @@ void parse::parseSentence(std::string sentence) {
 				ps.lastVPPart = VPPart::PERFAUX;
 			} else throw GrammarException("Unexpected perfect aux");
 		}
-		else if (verb v = ps.lastVPPart==VPPart::PERFAUX?getPastPart(word):verb{""}) {
-			std::cout << "\tparticiple in perfect verb\n";
-			ps.curVP.verb = v;
-			ps.lastVPPart = v.isToBe()? VPPart::TOBE : VPPart::END;
+		else if (verb papv = getPastPart(word)) {
+			switch (ps.lastVPPart) {
+				case VPPart::PERFAUX:
+					std::cout << "\tparticiple in perfect verb\n";
+					ps.curVP.verb = papv;
+					ps.lastVPPart = papv.isToBe()? VPPart::TOBE : VPPart::END;
+					break;
+				case VPPart::TOBE:
+					if (papv.isToBe()) throw GrammarException("\"been\" as passive verb");
+					std::cout << "\tparticiple in passive verb\n";
+					ps.curVP.verb = papv;
+					ps.curVP.active = false;
+					ps.lastVPPart = VPPart::END;
+					break;
+				default:
+					throw GrammarException("unexpected past participle");
+			}
+		}
+		else if (verb prpv = getPresPart(word)) {
+			switch (ps.lastVPPart) {
+				case VPPart::TOBE:
+					std::cout << "\tparticiple in continuous verb\n";
+					ps.curVP.verb = prpv;
+					ps.curVP.tenseForm = PROGRESSIVE;
+					ps.lastVPPart = prpv.isToBe()? VPPart::TOBE : VPPart::END;
+					break;
+				default:
+					throw GrammarException("unexpected present participle");
+			}
+		}
+		else if (verb spv = getSimplePast(word)) {
+			if (ps.lastVPPart==VPPart::BEGIN) {
+				std::cout << "\tsimple past\n";
+				ps.curVP.verb = spv;
+				ps.curVP.tense = PAST;
+				ps.lastVPPart = VPPart::END;
+			} else throw GrammarException("Unexpected simple past");
+		}
+		else if (verb bv = getBase(word)) {
+			if (ps.lastVPPart==VPPart::BEGIN) {
+				std::cout << "\tsimple present (not 3rd sing)\n";
+				ps.curVP.verb = bv;
+				ps.curVP.tense = PRESENT;
+				ps.curVP.pns ^= SING3; // all except third person singular
+				ps.lastVPPart = VPPart::END;
+			} else throw GrammarException("Unexpected simple present");
+		}
+		else if (verb tsv = getThirdSing(word)) {
+			if (ps.lastVPPart==VPPart::BEGIN) {
+				std::cout << "\tsimple present (3rd sing)\n";
+				ps.curVP.verb = tsv;
+				ps.curVP.tense = PRESENT;
+				ps.curVP.pns = SING3; // only third person singular
+				ps.lastVPPart = VPPart::END;
+			} else throw GrammarException("Unexpected simple present");
+		}
+		else if (pnFlags prtb = getPresentToBe(word)) {
+			if (ps.lastVPPart==VPPart::BEGIN) {
+				std::cout << "\tpresent to be\n";
+				ps.curVP.verb = verb::TO_BE;
+				ps.curVP.tense = PRESENT;
+				ps.curVP.pns = prtb;
+				ps.lastVPPart = VPPart::TOBE;
+			} else throw GrammarException("Unexpected present to be");
+		}
+		else if (pnFlags patb = getPastToBe(word)) {
+			if (ps.lastVPPart==VPPart::BEGIN) {
+				std::cout << "\tpast to be\n";
+				ps.curVP.verb = verb::TO_BE;
+				ps.curVP.tense = PAST;
+				ps.curVP.pns = patb;
+				ps.lastVPPart = VPPart::TOBE;
+			} else throw GrammarException("Unexpected past to be");
 		}
 		
 		// unrecognized word
@@ -107,4 +183,5 @@ void parse::parseSentence(std::string sentence) {
 		
 		//...
 	}
+	std::cout << "verb phrase: " << ps.curVP.toString() << "\n";
 }

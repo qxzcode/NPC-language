@@ -31,6 +31,7 @@ struct verb {
 	bool ppBegVow;
 	operator bool() const {return !base.empty();}
 	bool isToBe() const {return *this==TO_BE;}
+	bool operator==(const verb &rhs) const {return base==rhs.base&&pastPart==rhs.pastPart;} // should be good enough
 	static const verb TO_BE;
 };
 

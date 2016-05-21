@@ -45,11 +45,13 @@ namespace lang { namespace parse {
 	};
 	
 	struct VerbPhrase {
+		pnFlags pns = ALL;
 		TENSE tense;
 		TENSE_FORM tenseForm = SIMPLE;
 		bool perfect = false;
 		bool active = true;
 		verb verb;
+		std::string toString() const;
 	};
 	
 	void parseSentence(std::string sentence);

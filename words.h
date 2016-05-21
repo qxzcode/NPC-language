@@ -66,8 +66,17 @@ namespace lang { namespace parse {
 		bool third;
 		operator bool() const;
 	};
+	typedef unsigned char pnFlags;
+	constexpr pnFlags SING1=0x1,SING2=0x2,SING3=0x4,PL1=0x8,PL2=0x10,PL3=0x20,
+					  ALL=0x3f;
 	
 	PerfAux getPerfAux(std::string str);
 	verb getPastPart(std::string str);
+	verb getPresPart(std::string str);
+	verb getBase(std::string str);
+	verb getThirdSing(std::string str);
+	verb getSimplePast(std::string str);
+	pnFlags getPresentToBe(std::string str);
+	pnFlags getPastToBe(std::string str);
 	
 } }

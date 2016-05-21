@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]) {
 	
 	parse::initWords(lang);
 	try {
-		parse::parseSentence("his few dangerous berry bushes have been eaten");
+		parse::parseSentence("his berry is walking");
 	} catch (parse::GrammarException &ex) {
 		std::cerr << ex.what() << std::endl;
 	}
